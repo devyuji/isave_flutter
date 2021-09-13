@@ -9,7 +9,7 @@ Instagram tool to download images, reels, videos and more.
 
 ## Try out the app
 
-[App link](https://github.com/devyuji/isave_flutter/release)
+[App link](https://github.com/devyuji/isave_flutter/releases)
 
 `A feedback would be appreciated`
 
