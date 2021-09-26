@@ -86,6 +86,7 @@ class _HomeState extends State<Home> {
         index: _bottomNavigationCurrentIndex,
         children: screens,
       ),
+      resizeToAvoidBottomInset: false,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _bottomNavigationCurrentIndex,
         backgroundColor: Theme.of(context).backgroundColor,
