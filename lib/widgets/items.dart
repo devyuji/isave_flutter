@@ -6,55 +6,81 @@ import 'package:isave/utils/download.dart';
 
 class Items extends StatelessWidget {
   final List<Map> data;
+  final PageController controller;
 
   const Items({
     Key? key,
     required this.data,
+    required this.controller,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      scrollDirection: Axis.vertical,
-      cacheExtent: 100.0,
-      itemBuilder: (BuildContext context, int index) => Stack(
-        children: <Widget>[
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10.0),
-            child: Image.network(
-              data[index]['image_url'],
-              fit: BoxFit.cover,
+    final int totalLength = data.length;
+    int index = 0;
+
+    return PageView(
+      scrollDirection: Axis.horizontal,
+      controller: controller,
+      padEnds: false,
+      physics: BouncingScrollPhysics(),
+      children: data.map((e) {
+        index++;
+        return Stack(
+          children: [
+            Image.network(
+              e['image_url'],
+              fit: BoxFit.contain,
+              width: double.infinity,
             ),
-          ),
-          Positioned(
-            right: 0.0,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(100.0),
-                color: Colors.black,
-              ),
-              padding: const EdgeInsets.all(5.0),
-              child: IconButton(
-                iconSize: 25.0,
-                icon: Icon(Icons.download, color: Colors.white),
-                onPressed: () {
-                  var extension =
-                      data[index]['download_url'].split('?')[0].split('.').last;
-                  String fileName = "isave-${DateTime.now()}.$extension";
-                  download(data[index]['download_url'], fileName);
-                },
+            Positioned(
+              top: 5,
+              right: 10,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: IconButton(
+                  iconSize: 25.0,
+                  onPressed: () {
+                    var extension =
+                        e['download_url'].split('?')[0].split('.').last;
+                    String fileName =
+                        "isave-${DateTime.now().minute}.$extension";
+                    download(e['download_url'], fileName);
+                  },
+                  icon: Icon(
+                    Icons.download,
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ),
-          ),
-        ],
-      ),
-      separatorBuilder: (_, __) => Divider(
-        height: 20.0,
-        color: Colors.black54,
-      ),
-      itemCount: data.length,
+            Positioned(
+              bottom: 10.0,
+              right: 10.0,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20.0),
+                  color: Colors.black.withOpacity(0.8),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 5.0,
+                  horizontal: 15.0,
+                ),
+                child: Text(
+                  '$index/$totalLength',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            )
+          ],
+        );
+      }).toList(),
     );
   }
 }
-
-// class _ItemsState extends State<Items> {}

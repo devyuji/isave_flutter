@@ -21,7 +21,7 @@ class _LoadingState extends State<Loading> with SingleTickerProviderStateMixin {
       duration: const Duration(seconds: 1),
       vsync: this,
       lowerBound: 1.0,
-      upperBound: widget.width - 50,
+      upperBound: widget.width - 60,
     )..repeat(reverse: true);
 
     // print(widget.width);

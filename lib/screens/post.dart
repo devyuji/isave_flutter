@@ -24,6 +24,9 @@ class _PostState extends State<Post> {
   String username = "";
   bool _loading = false;
   TextEditingController _inputController = TextEditingController();
+  final PageController pageViewController = PageController(
+    initialPage: 0,
+  );
   late FocusNode _input;
 
   @override
@@ -40,7 +43,9 @@ class _PostState extends State<Post> {
   @override
   void dispose() {
     _inputController.dispose();
+    _inputController.removeListener(() {});
     _input.dispose();
+    pageViewController.dispose();
 
     super.dispose();
   }
@@ -50,7 +55,7 @@ class _PostState extends State<Post> {
 
     try {
       String id = instagramUrlParser(value);
-      const String url = ''; // api url
+      const String url = 'https://isave-api.herokuapp.com/post'; // api url
       final send = {"id": id};
 
       setState(() {
@@ -101,6 +106,12 @@ class _PostState extends State<Post> {
         });
       }
 
+      if (show)
+        pageViewController.animateToPage(
+          0,
+          duration: const Duration(milliseconds: 550),
+          curve: Curves.easeInOut,
+        );
       setState(() {
         username = data['username'];
         show = true;
@@ -129,70 +140,77 @@ class _PostState extends State<Post> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
 
-    return Container(
-      padding: EdgeInsets.only(top: 20.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          AnimatedOpacity(
-            opacity: _loading ? 1 : 0,
-            duration: const Duration(milliseconds: 650),
-            child: Loading(width: screenWidth),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
-            child: TextField(
-              controller: _inputController,
-              keyboardType: TextInputType.url,
-              maxLines: 1,
-              focusNode: _input,
-              decoration: InputDecoration(
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black, width: 2.0),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey, width: 1.0),
-                ),
-                prefixIcon:
-                    Icon(Icons.link_rounded, color: Colors.black, size: 25.0),
-                suffixIcon: _inputController.text.isNotEmpty
-                    ? IconButton(
-                        onPressed: () {
-                          _inputController.clear();
-                        },
-                        iconSize: 25.0,
-                        icon: Icon(
-                          Icons.close,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                      )
-                    : IconButton(
-                        onPressed: clipboard,
-                        iconSize: 22.0,
-                        icon: Icon(Icons.paste_rounded,
-                            color: Theme.of(context).primaryColor),
-                      ),
-                hintText: "Paste instagram url here!",
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        AnimatedOpacity(
+          opacity: _loading ? 1 : 0,
+          duration: const Duration(milliseconds: 650),
+          child: Loading(width: screenWidth),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          child: TextField(
+            controller: _inputController,
+            keyboardType: TextInputType.url,
+            maxLines: 1,
+            focusNode: _input,
+            decoration: InputDecoration(
+              focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.black, width: 2.0),
               ),
-              autocorrect: false,
-              cursorColor: Colors.black,
-              onSubmitted: fetchApi,
-            ),
-          ),
-          Expanded(
-            child: show
-                ? Padding(
-                    padding: const EdgeInsets.only(
-                      top: 15.0,
-                      left: 10.0,
-                      right: 10.0,
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: Colors.grey, width: 1.0),
+              ),
+              prefixIcon:
+                  Icon(Icons.link_rounded, color: Colors.black, size: 25.0),
+              suffixIcon: _inputController.text.isNotEmpty
+                  ? IconButton(
+                      onPressed: () {
+                        _inputController.clear();
+                      },
+                      iconSize: 25.0,
+                      icon: Icon(
+                        Icons.close,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    )
+                  : IconButton(
+                      onPressed: clipboard,
+                      iconSize: 22.0,
+                      icon: Icon(Icons.paste_rounded,
+                          color: Theme.of(context).primaryColor),
                     ),
-                    child: Items(data: _data),
-                  )
-                : Intro(name: 'post'),
+              hintText: "Paste instagram url here!",
+            ),
+            autocorrect: false,
+            cursorColor: Colors.black,
+            onSubmitted: fetchApi,
           ),
-        ],
-      ),
+        ),
+        if (show)
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 10.0,
+              left: 10.0,
+            ),
+            child: SelectableText('@$username',
+                style: Theme.of(context).textTheme.subtitle1),
+          ),
+        Expanded(
+          child: show
+              ? Padding(
+                  padding: const EdgeInsets.only(
+                    top: 15.0,
+                  ),
+                  child: Items(
+                    data: _data,
+                    controller: pageViewController,
+                  ),
+                )
+              : Intro(name: 'post'),
+        ),
+      ],
     );
   }
 }

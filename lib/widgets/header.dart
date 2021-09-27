@@ -67,7 +67,7 @@ AppBar header(BuildContext context) {
                 color: Colors.black,
               ),
               title: Text(
-                'Version 1.0',
+                'Version 1.0.2',
                 style: Theme.of(context).textTheme.headline2,
               ),
               subtitle: Text('Check for update'),
@@ -83,8 +83,7 @@ AppBar header(BuildContext context) {
 
   return AppBar(
     backgroundColor: Colors.white,
-    elevation: 10.0,
-    shadowColor: Color.fromRGBO(0, 0, 0, 0.2),
+    elevation: 0,
     title: Text(
       "isave",
       style: Theme.of(context).textTheme.headline1,

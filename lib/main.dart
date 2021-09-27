@@ -45,7 +45,7 @@ class _HomeState extends State<Home> {
 
   final QuickActions quickActions = const QuickActions();
 
-  List<Widget> screens = [Post(), Profile()];
+  List<Widget> tabs = [Post(), Profile()];
 
   @override
   void initState() {
@@ -84,39 +84,46 @@ class _HomeState extends State<Home> {
       appBar: header(context),
       body: IndexedStack(
         index: _bottomNavigationCurrentIndex,
-        children: screens,
+        children: tabs,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _bottomNavigationCurrentIndex,
-        backgroundColor: Theme.of(context).backgroundColor,
-        selectedLabelStyle: TextStyle(
-          fontWeight: FontWeight.bold,
+      resizeToAvoidBottomInset: false,
+      bottomNavigationBar: ClipRRect(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20.0),
+          topRight: Radius.circular(20.0),
         ),
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
-        selectedItemColor: Colors.black,
-        iconSize: 26.0,
-        onTap: (int index) {
-          setState(() {
-            _bottomNavigationCurrentIndex = index;
-          });
-        },
-        elevation: 10.0,
-        type: BottomNavigationBarType.fixed,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.feed,
-            ),
-            label: 'post',
+        child: BottomNavigationBar(
+          currentIndex: _bottomNavigationCurrentIndex,
+          backgroundColor: Colors.white,
+          selectedLabelStyle: const TextStyle(
+            fontWeight: FontWeight.bold,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.person,
+          showSelectedLabels: true,
+          showUnselectedLabels: true,
+          selectedItemColor: Colors.black,
+          iconSize: 26.0,
+          onTap: (int index) {
+            setState(() {
+              _bottomNavigationCurrentIndex = index;
+            });
+          },
+          elevation: 10.0,
+          type: BottomNavigationBarType.fixed,
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.feed,
+              ),
+              label: 'post',
             ),
-            label: 'profile',
-          ),
-        ],
+            BottomNavigationBarItem(
+              icon: Icon(
+                Icons.person,
+              ),
+              label: 'profile',
+            ),
+          ],
+        ),
       ),
     );
   }
