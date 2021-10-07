@@ -15,8 +15,8 @@ void main() async {
     MaterialApp(
       initialRoute: '/',
       routes: {
-        "/": (BuildContext context) => Home(),
-        "/image_view": (BuildContext context) => View(),
+        "/": (BuildContext context) => const Home(),
+        "/image_view": (BuildContext context) => const View(),
       },
       theme: theme,
       debugShowCheckedModeBanner: false,
@@ -26,7 +26,7 @@ void main() async {
   );
 
   SystemChrome.setSystemUIOverlayStyle(
-    SystemUiOverlayStyle(
+    const SystemUiOverlayStyle(
       statusBarBrightness: Brightness.dark,
       statusBarColor: Colors.white,
     ),
@@ -45,7 +45,7 @@ class _HomeState extends State<Home> {
 
   final QuickActions quickActions = const QuickActions();
 
-  List<Widget> screens = [Post(), Profile()];
+  List<Widget> screens = [const Post(), const Profile()];
 
   @override
   void initState() {
@@ -81,6 +81,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
+      resizeToAvoidBottomInset: false,
       appBar: header(context),
       body: IndexedStack(
         index: _bottomNavigationCurrentIndex,
@@ -90,8 +91,11 @@ class _HomeState extends State<Home> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _bottomNavigationCurrentIndex,
         backgroundColor: Theme.of(context).backgroundColor,
-        selectedLabelStyle: TextStyle(
-          fontWeight: FontWeight.bold,
+        selectedLabelStyle: const TextStyle(
+          fontWeight: FontWeight.w700,
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontWeight: FontWeight.w600,
         ),
         showSelectedLabels: true,
         showUnselectedLabels: true,
@@ -102,20 +106,20 @@ class _HomeState extends State<Home> {
             _bottomNavigationCurrentIndex = index;
           });
         },
-        elevation: 10.0,
+        elevation: 0,
         type: BottomNavigationBarType.fixed,
-        items: [
+        items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.feed,
+              Icons.collections_rounded,
             ),
-            label: 'post',
+            label: 'POST',
           ),
           BottomNavigationBarItem(
             icon: Icon(
-              Icons.person,
+              Icons.person_rounded,
             ),
-            label: 'profile',
+            label: 'PROFILE',
           ),
         ],
       ),

@@ -1,8 +1,10 @@
 // pub.dev
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:dio/dio.dart';
+import 'package:path/path.dart';
 
 // custom
 import 'package:isave/utils/toast.dart';
@@ -13,22 +15,24 @@ Future<void> download(String url, String fileName) async {
 
   if (permissionStatus) {
     try {
-      Directory path = await getExternalStorageDirectory() as Directory;
-      List<String> directoryNames = path.path.split('/');
+      Directory? path = await getExternalStorageDirectory();
+      List<String> directoryNames = path!.path.split('/');
       for (var i = 0; i < directoryNames.length; i++) {
         if (directoryNames[i] == 'Android') break;
 
         directory = directory + directoryNames[i] + '/';
       }
 
-      String downloadPath = '${directory}isave/$fileName';
+      String downloadPath = join(directory, 'isave', fileName);
+
       await Dio().download(url, downloadPath);
-      ToastMessage("Download Completed");
+      toastMessage("Download Completed");
     } catch (err) {
-      ToastMessage("Something went wrong!");
+      debugPrint('Something Went Wrong! #download');
+      toastMessage("Something went wrong!");
     }
   } else {
-    ToastMessage("Required permission in order to download");
+    toastMessage("Required permission in order to download");
   }
 }
 

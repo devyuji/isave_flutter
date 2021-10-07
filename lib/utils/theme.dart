@@ -5,7 +5,7 @@ ThemeData theme = ThemeData(
   brightness: Brightness.light,
   primaryColor: Colors.black,
   fontFamily: 'Poppins',
-  textTheme: TextTheme(
+  textTheme: const TextTheme(
     headline1: TextStyle(
       color: Colors.black,
       fontSize: 25.0,

@@ -44,7 +44,7 @@ class _ViewState extends State<View> {
                 ),
                 child: IconButton(
                   iconSize: 20.0,
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.arrow_back_ios_new,
                     color: Colors.white,
                   ),

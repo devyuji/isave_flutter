@@ -22,7 +22,7 @@ AppBar header(BuildContext context) {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             ListTile(
-              leading: Icon(
+              leading: const Icon(
                 Icons.android,
                 color: Colors.black,
               ),
@@ -35,7 +35,7 @@ AppBar header(BuildContext context) {
               },
             ),
             ListTile(
-              leading: Icon(
+              leading: const Icon(
                 GithubLogo.github_circled,
                 color: Colors.black,
               ),
@@ -48,7 +48,7 @@ AppBar header(BuildContext context) {
               },
             ),
             ListTile(
-              leading: Icon(
+              leading: const Icon(
                 Icons.share,
                 color: Colors.black,
               ),
@@ -62,15 +62,15 @@ AppBar header(BuildContext context) {
               },
             ),
             ListTile(
-              leading: Icon(
+              leading: const Icon(
                 Icons.info_rounded,
                 color: Colors.black,
               ),
               title: Text(
-                'Version 1.0',
+                'Version 1.0.3',
                 style: Theme.of(context).textTheme.headline2,
               ),
-              subtitle: Text('Check for update'),
+              subtitle: const Text('Check for update'),
               onTap: () {
                 _launchUrl("https://github.com/devyuji/isave_flutter/releases");
               },
@@ -83,8 +83,13 @@ AppBar header(BuildContext context) {
 
   return AppBar(
     backgroundColor: Colors.white,
-    elevation: 10.0,
-    shadowColor: Color.fromRGBO(0, 0, 0, 0.2),
+    shape: Border(
+      bottom: BorderSide(
+        color: Colors.grey.shade200,
+        width: 1.0,
+      ),
+    ),
+    elevation: 0,
     title: Text(
       "isave",
       style: Theme.of(context).textTheme.headline1,
@@ -92,7 +97,7 @@ AppBar header(BuildContext context) {
     actions: [
       IconButton(
         onPressed: _launchMenu,
-        icon: Icon(
+        icon: const Icon(
           Icons.menu_rounded,
           color: Colors.black,
           size: 30.0,
@@ -103,5 +108,5 @@ AppBar header(BuildContext context) {
 }
 
 void _launchUrl(String _url) async {
-  await canLaunch(_url) ? await launch(_url) : ToastMessage('Could not open!');
+  await canLaunch(_url) ? await launch(_url) : toastMessage('Could not open!');
 }

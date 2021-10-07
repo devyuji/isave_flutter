@@ -6,10 +6,10 @@ import 'package:string_validator/string_validator.dart';
 
 // custom
 import 'package:isave/widgets/intro.dart';
-import 'package:isave/widgets/items.dart';
 import 'package:isave/utils/toast.dart';
-import 'package:isave/utils/instagramParser.dart';
+import 'package:isave/utils/instagram_parser.dart';
 import 'package:isave/widgets/loading.dart';
+import 'package:isave/widgets/content.dart';
 
 class Post extends StatefulWidget {
   const Post({Key? key}) : super(key: key);
@@ -23,14 +23,26 @@ class _PostState extends State<Post> {
   bool show = false;
   String username = "";
   bool _loading = false;
-  TextEditingController _inputController = TextEditingController();
+  final TextEditingController _inputController = TextEditingController();
   late FocusNode _input;
+  late final PageController pageController;
+  int currentPage = 1;
 
   @override
   void initState() {
     super.initState();
 
     _input = FocusNode();
+
+    pageController = PageController(
+      initialPage: 0,
+    );
+
+    pageController.addListener(() {
+      setState(() {
+        currentPage = pageController.page!.round() + 1;
+      });
+    });
 
     _inputController.addListener(() {
       setState(() {});
@@ -40,7 +52,10 @@ class _PostState extends State<Post> {
   @override
   void dispose() {
     _inputController.dispose();
+    _inputController.removeListener(() {});
     _input.dispose();
+    pageController.dispose();
+    pageController.removeListener(() {});
 
     super.dispose();
   }
@@ -49,7 +64,7 @@ class _PostState extends State<Post> {
     if (value.isEmpty || !isURL(value)) return;
 
     try {
-      String id = instagramUrlParser(value);
+      String id = InstagramParser.postUrl(value);
       const String url = ''; // api url
       final send = {"id": id};
 
@@ -69,7 +84,7 @@ class _PostState extends State<Post> {
       );
 
       if (res.statusCode != 200) {
-        ToastMessage("Something went wrong!");
+        toastMessage("Something went wrong!");
         setState(() {
           _loading = false;
         });
@@ -101,13 +116,19 @@ class _PostState extends State<Post> {
         });
       }
 
+      if (show) {
+        pageController.animateToPage(0,
+            duration: const Duration(milliseconds: 550),
+            curve: Curves.bounceInOut);
+      }
+
       setState(() {
         username = data['username'];
         show = true;
       });
     } catch (err) {
-      print('error = $err');
-      ToastMessage("Something went wrong!");
+      debugPrint('something went wrong! #FETCH POST');
+      toastMessage("Something went wrong!");
     }
 
     setState(() {
@@ -127,10 +148,11 @@ class _PostState extends State<Post> {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
+    final double screenWidth = MediaQuery.of(context).size.width;
 
     return Container(
-      padding: EdgeInsets.only(top: 20.0),
+      color: Colors.white,
+      padding: const EdgeInsets.only(top: 10.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -147,50 +169,77 @@ class _PostState extends State<Post> {
               maxLines: 1,
               focusNode: _input,
               decoration: InputDecoration(
-                focusedBorder: OutlineInputBorder(
+                focusedBorder: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.black, width: 2.0),
                 ),
-                enabledBorder: OutlineInputBorder(
+                enabledBorder: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.grey, width: 1.0),
                 ),
-                prefixIcon:
-                    Icon(Icons.link_rounded, color: Colors.black, size: 25.0),
+                prefixIcon: const Icon(Icons.link_rounded, color: Colors.black),
                 suffixIcon: _inputController.text.isNotEmpty
                     ? IconButton(
                         onPressed: () {
                           _inputController.clear();
                         },
-                        iconSize: 25.0,
                         icon: Icon(
-                          Icons.close,
+                          Icons.clear_rounded,
                           color: Theme.of(context).primaryColor,
                         ),
                       )
                     : IconButton(
                         onPressed: clipboard,
                         iconSize: 22.0,
-                        icon: Icon(Icons.paste_rounded,
-                            color: Theme.of(context).primaryColor),
+                        icon: Icon(
+                          Icons.content_paste_rounded,
+                          color: Theme.of(context).primaryColor,
+                        ),
                       ),
-                hintText: "Paste instagram url here!",
+                hintText: "paste instagram url here!",
               ),
               autocorrect: false,
               cursorColor: Colors.black,
               onSubmitted: fetchApi,
             ),
           ),
+          if (show)
+            Padding(
+              padding: const EdgeInsets.only(
+                top: 10.0,
+              ),
+              child: SelectableText(
+                "@$username",
+                style: const TextStyle(fontSize: 17.0),
+              ),
+            ),
           Expanded(
             child: show
-                ? Padding(
-                    padding: const EdgeInsets.only(
-                      top: 15.0,
-                      left: 10.0,
-                      right: 10.0,
-                    ),
-                    child: Items(data: _data),
+                ? Stack(
+                    children: [
+                      Content(data: _data, controller: pageController),
+                      Positioned(
+                        bottom: 0,
+                        right: 10,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: const Color.fromRGBO(0, 0, 0, 0.8),
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          width: 50.0,
+                          alignment: Alignment.center,
+                          padding: const EdgeInsets.all(5.0),
+                          child: Text(
+                            '$currentPage/${_data.length}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
                   )
-                : Intro(name: 'post'),
-          ),
+                : const Intro(name: 'post'),
+          )
         ],
       ),
     );

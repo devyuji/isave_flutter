@@ -9,7 +9,7 @@ import 'package:isave/widgets/intro.dart';
 import 'package:isave/widgets/loading.dart';
 import 'package:isave/utils/toast.dart';
 import 'package:isave/utils/download.dart';
-import 'package:isave/utils/instagramParser.dart';
+import 'package:isave/utils/instagram_parser.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -57,7 +57,7 @@ class _ProfileState extends State<Profile> {
   Future<void> fetchApi(String value) async {
     if (value.isEmpty) return;
 
-    if (isURL(value)) value = instagramProfileParser(value);
+    if (isURL(value)) value = InstagramParser.profileUrl(value);
 
     setState(() {
       _loading = true;
@@ -77,7 +77,7 @@ class _ProfileState extends State<Profile> {
         ),
       );
       if (res.statusCode != 200) {
-        ToastMessage("Something went wrong!");
+        toastMessage("Something went wrong!");
         setState(() {
           _loading = false;
         });
@@ -91,8 +91,8 @@ class _ProfileState extends State<Profile> {
         show = true;
       });
     } catch (err) {
-      print('error : $err');
-      ToastMessage("Something went wrong!");
+      debugPrint('something went wrong! #Fetch Profile');
+      toastMessage("Something went wrong!");
     }
 
     setState(() {
@@ -104,8 +104,8 @@ class _ProfileState extends State<Profile> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
 
-    return Container(
-      padding: EdgeInsets.only(top: 20.0),
+    return Padding(
+      padding: const EdgeInsets.only(top: 10.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -121,27 +121,34 @@ class _ProfileState extends State<Profile> {
               controller: inputController,
               focusNode: _input,
               decoration: InputDecoration(
-                focusedBorder: OutlineInputBorder(
+                focusedBorder: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.black, width: 2.0),
                 ),
-                enabledBorder: OutlineInputBorder(
+                enabledBorder: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.grey, width: 1.0),
                 ),
                 hintText: "Enter profile username",
-                prefixIcon: Icon(Icons.format_list_bulleted_rounded,
-                    color: Theme.of(context).primaryColor),
+                prefixIcon: Icon(
+                  Icons.link_rounded,
+                  color: Theme.of(context).primaryColor,
+                ),
                 suffixIcon: inputController.text.isEmpty
                     ? IconButton(
                         onPressed: clipboard,
-                        icon: Icon(Icons.paste_rounded,
-                            color: Theme.of(context).primaryColor),
+                        icon: Icon(
+                          Icons.content_paste_rounded,
+                          size: 22.0,
+                          color: Theme.of(context).primaryColor,
+                        ),
                       )
                     : IconButton(
                         onPressed: () {
                           inputController.clear();
                         },
-                        icon: Icon(Icons.close,
-                            color: Theme.of(context).primaryColor),
+                        icon: Icon(
+                          Icons.clear_rounded,
+                          color: Theme.of(context).primaryColor,
+                        ),
                       ),
               ),
               cursorColor: Colors.black,
@@ -156,7 +163,7 @@ class _ProfileState extends State<Profile> {
                       top: 10.0,
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(20.0),
+                      padding: const EdgeInsets.all(10.0),
                       child: SingleChildScrollView(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,7 +172,7 @@ class _ProfileState extends State<Profile> {
                               '@${_data['username']}',
                               style: Theme.of(context).textTheme.bodyText1,
                             ),
-                            Divider(
+                            const Divider(
                               height: 20.0,
                             ),
                             Row(
@@ -198,7 +205,7 @@ class _ProfileState extends State<Profile> {
                                       style:
                                           Theme.of(context).textTheme.headline2,
                                     ),
-                                    Text(
+                                    const Text(
                                       'Posts',
                                     )
                                   ],
@@ -210,7 +217,7 @@ class _ProfileState extends State<Profile> {
                                       style:
                                           Theme.of(context).textTheme.headline2,
                                     ),
-                                    Text(
+                                    const Text(
                                       'Followers',
                                     )
                                   ],
@@ -222,14 +229,14 @@ class _ProfileState extends State<Profile> {
                                       style:
                                           Theme.of(context).textTheme.headline2,
                                     ),
-                                    Text(
+                                    const Text(
                                       'Following',
                                     )
                                   ],
                                 ),
                               ],
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 20.0,
                             ),
                             // name
@@ -237,11 +244,11 @@ class _ProfileState extends State<Profile> {
                               _data['name'],
                               style: Theme.of(context).textTheme.bodyText1,
                             ),
-                            SizedBox(height: 5.0),
+                            const SizedBox(height: 5.0),
 
                             // bio
                             SelectableText(_data['bio']),
-                            Divider(),
+                            const Divider(),
 
                             TextButton.icon(
                               icon: Icon(Icons.download,
@@ -259,13 +266,18 @@ class _ProfileState extends State<Profile> {
                                   fontFamily: 'Poppins',
                                 ),
                               ),
+                              style: ButtonStyle(
+                                overlayColor: MaterialStateProperty.all<Color>(
+                                  Colors.black.withOpacity(0.1),
+                                ),
+                              ),
                             ),
                           ],
                         ),
                       ),
                     ),
                   )
-                : Intro(name: 'profile'),
+                : const Intro(name: 'profile'),
           ),
         ],
       ),
