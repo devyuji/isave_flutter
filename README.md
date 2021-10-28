@@ -5,31 +5,16 @@ Instagram tool to download images, reels, videos and more.
 ## Different version
 
 - [Web](https://github.com/devyuji/isave)
-- [React Native](https://github.com/devyuji/isave-app)
 
 ## Try out the app
 
 [App link](https://github.com/devyuji/isave_flutter/releases)
 
-`A feedback would be appreciated`
+**A feedback would be appreciated**
 
 ## Screenshots
 
-[<img src="/assets/screenshots/main.png"
-    alt="Main section"
-    height="256">](/assets/screenshots/main.png)
-
-[<img src="/assets/screenshots/post.png"
-    alt="Post section"
-    height="256">](/assets/screenshots/post.png)
-
-[<img src="/assets/screenshots/profile.png"
-    alt="Profile section"
-    height="256">](/assets/screenshots/profile.png)
-
-[<img src="/assets/screenshots/menu.png"
-    alt="Menu section"
-    height="256">](/assets/screenshots/menu.png)
+![](/assets/screenshots/cover_image.png)
 
 ## Getting Started
 
@@ -39,7 +24,7 @@ cd isave_flutter
 pub get or flutter get
 ```
 
-`Choose the emulator only Android support and run the main.dart file`
+_Choose the emulator only Android support and run the main.dart file_
 
 ## Contributing
 

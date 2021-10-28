@@ -24,8 +24,6 @@ class _LoadingState extends State<Loading> with SingleTickerProviderStateMixin {
       upperBound: widget.width - 70,
     )..repeat(reverse: true);
 
-    // print(widget.width);
-
     _animation.addListener(() {
       setState(() {
         xOffset = _animation.value;
