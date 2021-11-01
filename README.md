@@ -24,7 +24,7 @@ cd isave_flutter
 pub get or flutter get
 ```
 
-_Choose the emulator only Android support and run the main.dart file_
+_Choose the android emulator and run main.dart file using (flutter run lib/main.dart) command_
 
 ## Contributing
 
