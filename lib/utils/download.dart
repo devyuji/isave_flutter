@@ -1,44 +1,82 @@
-// pub.dev
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
+
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:dio/dio.dart';
-import 'package:path/path.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 
 // custom
+import 'package:isave/models.dart';
 import 'package:isave/utils/toast.dart';
 
-Future<void> download(String url, String fileName) async {
-  bool permissionStatus = await permission();
-  String directory = '';
+class DownloadFile {
+  Data? data;
+  String? fileName;
 
-  if (permissionStatus) {
+  DownloadFile({
+    this.data,
+    this.fileName,
+  });
+
+  void start() async {
     try {
-      Directory? path = await getExternalStorageDirectory();
-      List<String> directoryNames = path!.path.split('/');
-      for (var i = 0; i < directoryNames.length; i++) {
-        if (directoryNames[i] == 'Android') break;
+      String? dir = await _getPath();
 
-        directory = directory + directoryNames[i] + '/';
-      }
-
-      String downloadPath = join(directory, 'isave', fileName);
-
-      await Dio().download(url, downloadPath);
-      toastMessage("Download Completed");
-    } catch (err) {
-      debugPrint('Something Went Wrong! #download');
-      toastMessage("Something went wrong!");
+      data?.taskId = await FlutterDownloader.enqueue(
+        url: data!.downloadLink,
+        savedDir: dir!,
+        fileName: fileName!,
+        showNotification: true,
+        saveInPublicStorage: true,
+        openFileFromNotification: true,
+        requiresStorageNotLow: true,
+      );
+      toastMessage("Download starting");
+    } catch (_) {
+      toastMessage("UH-OH Failed to download");
     }
-  } else {
-    toastMessage("Required permission in order to download");
   }
-}
 
-Future<bool> permission() async {
-  final status = await Permission.storage.request();
-  if (status.isDenied) return false;
+  static Future<bool> askPermission() async {
+    final response = await Permission.storage.request();
 
-  return true;
+    if (response.isGranted) {
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<String?> _getPath() async {
+    Directory? downloadPath = await getExternalStorageDirectory();
+    var f = downloadPath?.path.split('/');
+    int length = f!.length;
+    String path = "";
+    for (var i = 0; i < length; i++) {
+      if (f[i] == 'Android') break;
+
+      path = path + f[i] + '/';
+    }
+    path = path + "Download/";
+    try {
+      Directory(path).create(recursive: true);
+    } catch (_) {}
+
+    return path;
+  }
+
+  static void openFile(String id) {
+    try {
+      FlutterDownloader.open(taskId: id);
+    } catch (_) {
+      toastMessage("UH-OH Unable to open file");
+    }
+  }
+
+  static void deleteFile(String id) {
+    try {
+      FlutterDownloader.remove(taskId: id, shouldDeleteContent: true);
+    } catch (err) {
+      toastMessage("UH-OH unable to delete file");
+    }
+  }
 }

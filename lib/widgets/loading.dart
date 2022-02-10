@@ -1,61 +1,89 @@
 import 'package:flutter/material.dart';
+import 'package:isave/constraint.dart';
 
-class Loading extends StatefulWidget {
-  final double width;
+class Loading {
+  static Future<void> show(BuildContext context) {
+    final isDarkMode =
+        MediaQuery.of(context).platformBrightness == Brightness.dark;
 
-  const Loading({Key? key, required this.width}) : super(key: key);
+    bool shouldPop = false;
 
-  @override
-  _LoadingState createState() => _LoadingState();
-}
-
-class _LoadingState extends State<Loading> with SingleTickerProviderStateMixin {
-  late AnimationController _animation;
-  double xOffset = 0.0;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _animation = AnimationController(
-      duration: const Duration(seconds: 1),
-      vsync: this,
-      lowerBound: 1.0,
-      upperBound: widget.width - 70,
-    )..repeat(reverse: true);
-
-    _animation.addListener(() {
-      setState(() {
-        xOffset = _animation.value;
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _animation.dispose();
-    _animation.removeListener(() {});
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animation,
-      child: Transform.translate(
-        offset: Offset(xOffset, 0),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.black,
-            borderRadius: BorderRadius.circular(20.0),
+    return showDialog(
+      context: context,
+      barrierDismissible: shouldPop,
+      barrierColor: isDarkMode
+          ? Colors.black.withOpacity(0.5)
+          : Colors.white.withOpacity(0.2),
+      builder: (_) => WillPopScope(
+        onWillPop: () async => shouldPop,
+        child: Dialog(
+          backgroundColor: isDarkMode ? kDarkPrimaryColor : Colors.white,
+          insetAnimationCurve: Curves.easeIn,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(kDefaultPadding * 2),
           ),
-          width: 80.0,
-          height: 5.0,
+          child: Padding(
+            padding: const EdgeInsets.all(kDefaultPadding * 2.5),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                const SizedBox(
+                  width: 15.0,
+                  height: 15.0,
+                  child: CircularProgressIndicator(
+                    color: Colors.grey,
+                    strokeWidth: 2.0,
+                  ),
+                ),
+                const SizedBox(
+                  width: kDefaultPadding * 2,
+                ),
+                Text(
+                  'Loading...',
+                  style: TextStyle(
+                    color: isDarkMode ? kDarkTextColor : kTextColor,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 18.0,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
-      builder: (BuildContext context, Widget? child) {
-        return child!;
-      },
     );
   }
+
+  static void hide(BuildContext context) {
+    Navigator.of(context).pop();
+  }
 }
+
+// AlertDialog(
+//           elevation: 1,
+//           backgroundColor: isDarkMode ? kDarkPrimaryColor : Colors.white,
+//           shape: RoundedRectangleBorder(
+//             borderRadius: BorderRadius.circular(kDefaultPadding),
+//           ),
+//           title: Row(
+//             children: <Widget>[
+//               const SizedBox(
+//                 width: 15.0,
+//                 height: 15.0,
+//                 child: CircularProgressIndicator(
+//                   color: Colors.grey,
+//                   strokeWidth: 2.0,
+//                 ),
+//               ),
+//               const SizedBox(width: kDefaultPadding * 2),
+//               Text(
+//                 "Loading...",
+//                 style: TextStyle(
+//                   color: isDarkMode ? kDarkTextColor : kTextColor,
+//                   fontWeight: FontWeight.w700,
+//                   fontSize: 18.0,
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
