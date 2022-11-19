@@ -2,6 +2,8 @@
 
 Instagram tool to download images, reels, videos and more.
 
+`Currently, the app will not operate due to a server problem. It is advised that you use the web version for optimal functioning.`
+
 ## Different version
 
 - [Web](https://github.com/devyuji/isave)
